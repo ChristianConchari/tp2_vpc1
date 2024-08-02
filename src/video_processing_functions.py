@@ -109,10 +109,13 @@ def calculate_video_quality_grid_with_roi(video_path: str, delay: int = 42, N: i
     
     # Initialize the quality measure list
     quality_measure_list = []
+    
+    frame_number = 0
 
     while True:
         # Capture the first frame
-        ret, frame = cap.read()      
+        ret, frame = cap.read()    
+        frame_number += 1  
                             
         # Check if the frame is captured successfully
         if not ret:
@@ -153,8 +156,8 @@ def calculate_video_quality_grid_with_roi(video_path: str, delay: int = 42, N: i
         roi_height, roi_width = gray_roi.shape
         elem_size = min(roi_height // (2 * N + 1), roi_width // (2 * M + 1)) 
         
-        # Initialize a list to store quality measures for the current frame
-        frame_quality_measures = []
+        # Initialize a list to store the focus measures of each grid element
+        frame_focus_measures  = []
 
         # Loop over each grid element
         for i in range(N):
@@ -172,13 +175,20 @@ def calculate_video_quality_grid_with_roi(video_path: str, delay: int = 42, N: i
                 fm = frequency_domain_blur_measure(elem)
                 
                 # Append the focus measure to the list
-                frame_quality_measures.append(fm)
+                frame_focus_measures.append(fm)
                 
                 # Draw a rectangle around the current grid element
                 cv.rectangle(frame, (elem_x_start, elem_y_start), (elem_x_end, elem_y_end), (0, 255, 0), 1)
         
-        # Append the quality measures for the current frame to the overall list
-        quality_measure_list.append(frame_quality_measures)
+        # Calculate the average focus measure for the frame
+        avg_focus_measure = np.mean(frame_focus_measures)
+        
+        # Append the average focus measure to the frame_focus_measures list
+        quality_measure_list.append(avg_focus_measure)
+        
+        # Write the frame number and average focus measure on the frame
+        text = f"Frame: {frame_number}, FM: {avg_focus_measure:.4f}"
+        cv.putText(frame, text, (10, 30), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 1, cv.LINE_AA)
         
         # Show the frame with the grid overlay
         cv.imshow('Frame with Grid', frame)
