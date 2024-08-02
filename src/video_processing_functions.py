@@ -1,4 +1,5 @@
 import cv2 as cv
+import numpy as np
 from .quality_measure_functions import frequency_domain_blur_measure
 
 def calculate_video_quality(video_path: str, delay: int = 42, roi_percentage: float = None) -> list:
