@@ -85,7 +85,7 @@ def calculate_video_quality(video_path: str, delay: int = 42, roi_percentage: fl
     
     return quality_measure_list
 
-def calculate_video_quality_grid_with_roi(video_path: str, delay: int = 42, N: int = 7, M: int = 7, roi_percentage: float = 0.1) -> list:
+def calculate_video_quality_grid(video_path: str, delay: int = 42, N: int = 7, M: int = 7, roi_percentage: float = 0.1) -> list:
     """
     Calculates the quality measure for each rectangular element in an NxM grid over a specified ROI for each frame in the video
     and displays the video in grayscale with the grid overlayed.
