@@ -105,7 +105,14 @@ def calculate_video_quality(
     
     return quality_measure_list
 
-def calculate_video_quality_grid(video_path: str, delay: int = 42, N: int = 7, M: int = 7, roi_percentage: float = 0.1) -> list:
+def calculate_video_quality_grid(
+    video_path: str, 
+    delay: int = 42,
+    quality_measure_function: Callable[[np.ndarray], float] = frequency_domain_blur_measure, 
+    N: int = 7, 
+    M: int = 7, 
+    roi_percentage: float = 0.1
+    ) -> list:
     """
     Calculates the quality measure for each rectangular element in an NxM grid over a specified ROI for each frame in the video
     and displays the video in grayscale with the grid overlayed.
@@ -113,6 +120,7 @@ def calculate_video_quality_grid(video_path: str, delay: int = 42, N: int = 7, M
     Parameters:
     video_path (str): The path to the video file.
     delay (int): The delay between frames in milliseconds.
+    quality_measure_function (Callable[[np.ndarray], float]): The function used to calculate the quality measure.
     N (int): Number of vertical grid elements.
     M (int): Number of horizontal grid elements.
     roi_percentage (float): The percentage of the frame to be considered as the region of interest.
@@ -193,7 +201,7 @@ def calculate_video_quality_grid(video_path: str, delay: int = 42, N: int = 7, M
                 elem = gray[elem_y_start:elem_y_end, elem_x_start:elem_x_end]
                 
                 # Compute the focus measure for the current grid element
-                fm = frequency_domain_blur_measure(elem)
+                fm = quality_measure_function(elem)
                 
                 # Append the focus measure to the list
                 frame_focus_measures.append(fm)
