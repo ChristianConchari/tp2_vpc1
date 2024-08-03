@@ -1,14 +1,21 @@
 import cv2 as cv
 import numpy as np
 from .quality_measure_functions import frequency_domain_blur_measure
+from typing import Callable
 
-def calculate_video_quality(video_path: str, delay: int = 42, roi_percentage: float = None) -> list:
+def calculate_video_quality(
+    video_path: str,
+    delay: int = 42, 
+    quality_measure_function: Callable[[np.ndarray], float] = frequency_domain_blur_measure,
+    roi_percentage: float = None
+) -> list:
     """
     Calculates the quality measure for each frame in the video and displays the video in grayscale.
     
     Parameters:
     video_path (str): The path to the video file.
     delay (int): The delay between frames in milliseconds.
+    quality_measure_function (Callable[[np.ndarray], float]): The function used to calculate the quality measure.
     roi_percentage (float): The percentage of the frame to be considered as the region of interest.
     
     Returns:
@@ -24,6 +31,9 @@ def calculate_video_quality(video_path: str, delay: int = 42, roi_percentage: fl
     
     # Initialize the quality measure list
     quality_measure_list = []
+    
+    # Initialize the frame number
+    frame_number = 0
 
     while True:
         # Capture the first frame
@@ -32,6 +42,8 @@ def calculate_video_quality(video_path: str, delay: int = 42, roi_percentage: fl
         # Check if the frame is captured successfully
         if not ret:
             break
+        
+        frame_number += 1
         
         # Convert the frame to grayscale
         gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
@@ -56,19 +68,27 @@ def calculate_video_quality(video_path: str, delay: int = 42, roi_percentage: fl
             gray_roi = gray[y_start:y_end, x_start:x_end]
             
             # Compute the fm for the ROI
-            fm = frequency_domain_blur_measure(gray_roi)
+            fm = quality_measure_function(gray_roi)
             
             # Draw the ROI on the frame
             cv.rectangle(frame, (x_start, y_start), (x_end, y_end), (0, 255, 0), 2)
             
+            # Write the frame number and average focus measure on the frame
+            text = f"Frame: {frame_number}, FM: {fm:.4f}"
+            cv.putText(frame, text, (10, 30), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 1, cv.LINE_AA)
+            
             # Show the frame with ROI
             cv.imshow(f'Frame with ROI ({int(roi_percentage*100)}% of frame)', frame)
         else:
+            # Compute the fm for each frame
+            fm = quality_measure_function(gray)
+            
+            # Write the frame number and average focus measure on the frame
+            text = f"Frame: {frame_number}, FM: {fm:.4f}"
+            cv.putText(frame, text, (10, 30), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 1, cv.LINE_AA)
+            
             # Show the frame
             cv.imshow('Frame', frame)
-            
-            # Compute the fm for each frame
-            fm = frequency_domain_blur_measure(gray)
         
         # Save the fm value to quality measure list 
         quality_measure_list.append(fm)
