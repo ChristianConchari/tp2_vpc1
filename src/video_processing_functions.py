@@ -1,6 +1,6 @@
 import cv2 as cv
 import numpy as np
-from .quality_measure_functions import frequency_domain_blur_measure
+from .focus_measure_functions import frequency_domain_blur_measure
 from typing import Callable, Tuple, List
 
 def detect_max_focus_points(

@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from typing import List, Dict, Callable
 from .video_processing_functions import detect_max_focus_points, display_video_highlight_max_focus
-from .quality_measure_functions import frequency_domain_blur_measure
+from .focus_measure_functions import frequency_domain_blur_measure
 
 def plot_focus_measurement_versus_frame(
     quality_measurements_list: List,
