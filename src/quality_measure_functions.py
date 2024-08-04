@@ -1,4 +1,5 @@
 import numpy as np
+import cv2 as cv
 
 def frequency_domain_blur_measure(image: np.ndarray) -> float:
     """
@@ -31,3 +32,24 @@ def frequency_domain_blur_measure(image: np.ndarray) -> float:
     FM = TH / (img_height * img_width)
     
     return FM
+
+def variance_of_laplacian(image: np.ndarray) -> float:
+    """
+    This function calculates the Variance of Laplacian (LAP4) focus measure of an image.
+    
+    Args:
+    image (np.ndarray): The input image.
+    
+    Returns:
+    float: The LAP4 focus measure value of the input image.
+    """
+    # Step 1: Apply the Laplacian operator to the image
+    laplacian = cv.Laplacian(image, cv.CV_64F)
+    
+    # Step 2: Compute the mean of the Laplacian
+    mean_laplacian = np.mean(laplacian)
+    
+    # Step 3: Calculate the variance of the Laplacian
+    variance_laplacian = np.mean((laplacian - mean_laplacian) ** 2)
+    
+    return variance_laplacian
