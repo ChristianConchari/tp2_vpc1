@@ -145,7 +145,8 @@ def display_video_highlight_max_focus(
     M: int = 1,
     N: int = 1,
     roi_percentage: float = 1.0,
-    delay: int = 42
+    delay: int = 42,
+    title: str = 'Frame with Focus Highlight'
     ):
     # Create a video capture object
     cap = cv.VideoCapture(video_path)
@@ -254,7 +255,7 @@ def display_video_highlight_max_focus(
         cv.putText(frame, text, (10, 30), cv.FONT_HERSHEY_SIMPLEX, 0.8, color, 1, cv.LINE_AA)
         
         # Show the frame
-        cv.imshow('Frame with Focus Highlight', frame)
+        cv.imshow(title, frame)
         
         # Break the loop when 'q' is pressed or wait for the delay
         if cv.waitKey(delay) & 0xFF == ord('q'):
