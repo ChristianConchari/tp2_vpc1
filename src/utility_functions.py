@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
-from typing import List, Dict
+import numpy as np
+from typing import List, Dict, Callable
 from .video_processing_functions import detect_max_focus_points, display_video_highlight_max_focus
+from .quality_measure_functions import frequency_domain_blur_measure
 
 def plot_focus_measurement_versus_frame(
     quality_measurements_list: List,
@@ -53,7 +55,11 @@ def plot_focus_measurement_versus_frame(
     # Show the plot
     plt.show()
     
-def plot_quality_measurements_on_2x2_grid(variations: List[Dict[str, int | float]], video_path: str) -> None:
+def plot_quality_measurements_on_2x2_grid(
+    variations: List[Dict[str, int | float]], 
+    video_path: str,
+    quality_measure_function: Callable[[np.ndarray], float] = frequency_domain_blur_measure
+    ) -> None:
     """
     Plots the quality measurements for different variations of NxM focus matrices
     on a 2x2 grid.
@@ -71,7 +77,8 @@ def plot_quality_measurements_on_2x2_grid(variations: List[Dict[str, int | float
             video_path=video_path, 
             N=var['N'], 
             M=var['M'],
-            roi_percentage=var['roi_percentage']
+            roi_percentage=var['roi_percentage'],
+            quality_measure_function=quality_measure_function
         )
         
         # Find the max focus frames
@@ -113,7 +120,11 @@ def plot_quality_measurements_on_2x2_grid(variations: List[Dict[str, int | float
     plt.tight_layout()
     plt.show()
     
-def show_video_highlight_with_variations(variations: List[Dict[str, int | float]], video_path: str,) -> None:
+def show_video_highlight_with_variations(
+    variations: List[Dict[str, int | float]], 
+    video_path: str,
+    quality_measure_function: Callable[[np.ndarray], float] = frequency_domain_blur_measure
+    ) -> None:
     """
     Displays the video with the focus points highlighted for different variations of NxM focus matrices.
     
@@ -130,7 +141,8 @@ def show_video_highlight_with_variations(variations: List[Dict[str, int | float]
             video_path=video_path, 
             N=var['N'], 
             M=var['M'],
-            roi_percentage=var['roi_percentage']
+            roi_percentage=var['roi_percentage'],
+            quality_measure_function=quality_measure_function
         )
         
         # Display the video with the focus points highlighted
