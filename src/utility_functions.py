@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 from typing import List, Dict
-from .video_processing_functions import detect_max_focus_points
+from .video_processing_functions import detect_max_focus_points, display_video_highlight_max_focus
 
 def plot_focus_measurement_versus_frame(
     quality_measurements_list: List,
@@ -53,7 +53,7 @@ def plot_focus_measurement_versus_frame(
     # Show the plot
     plt.show()
     
-def plot_quality_measurements_on_2x2_grid(variations: List[Dict[str, int | float]], video_path: str):
+def plot_quality_measurements_on_2x2_grid(variations: List[Dict[str, int | float]], video_path: str) -> None:
     """
     Plots the quality measurements for different variations of NxM focus matrices
     on a 2x2 grid.
@@ -101,7 +101,7 @@ def plot_quality_measurements_on_2x2_grid(variations: List[Dict[str, int | float
         # Add labels, title, and legend
         ax.set_xlabel('Frame', fontsize=12)
         ax.set_ylabel('Quality Measure', fontsize=12)
-        ax.set_title(f'Image Quality Measure FM Curve\nN={var["N"]}, M={var["M"]}', fontsize=14)
+        ax.set_title(f'Image Quality Measure FM Curve (N={var["N"]}, M={var["M"]})', fontsize=14)
 
         # Add grid lines
         ax.grid(True)
@@ -112,3 +112,34 @@ def plot_quality_measurements_on_2x2_grid(variations: List[Dict[str, int | float
     # Adjust the layout
     plt.tight_layout()
     plt.show()
+    
+def show_video_highlight_on_2x2_grid(variations: List[Dict[str, int | float]], video_path: str,) -> None:
+    """
+    Displays the video with the focus points highlighted on a 2x2 grid.
+    
+    Parameters:
+    - variations (list): A list of dictionaries with keys 'N', 'M', and 'roi_percentage'.
+    - video_path (str): The path to the
+    
+    Returns:
+    - None
+    """
+    for i, var in enumerate(variations):
+        # Compute the quality measurements of the video with the focus matrix
+        quality_measurements_list, max_focus_points, max_focus_value = detect_max_focus_points(
+            video_path=video_path, 
+            N=var['N'], 
+            M=var['M'],
+            roi_percentage=var['roi_percentage']
+        )
+        
+        # Display the video with the focus points highlighted
+        display_video_highlight_max_focus(
+            video_path = video_path, 
+            M = var['N'],
+            N = var['M'],
+            roi_percentage = var['roi_percentage'],
+            max_focus_points = max_focus_points, 
+            quality_measurements_list = quality_measurements_list, 
+            title = 'Frame with Focus Highlight\n' + f'N={var["N"]}, M={var["M"]}'   
+        )
