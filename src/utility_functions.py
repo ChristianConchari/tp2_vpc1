@@ -113,9 +113,9 @@ def plot_quality_measurements_on_2x2_grid(variations: List[Dict[str, int | float
     plt.tight_layout()
     plt.show()
     
-def show_video_highlight_on_2x2_grid(variations: List[Dict[str, int | float]], video_path: str,) -> None:
+def show_video_highlight_with_variations(variations: List[Dict[str, int | float]], video_path: str,) -> None:
     """
-    Displays the video with the focus points highlighted on a 2x2 grid.
+    Displays the video with the focus points highlighted for different variations of NxM focus matrices.
     
     Parameters:
     - variations (list): A list of dictionaries with keys 'N', 'M', and 'roi_percentage'.
