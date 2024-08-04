@@ -39,7 +39,7 @@ def plot_focus_measurement_versus_frame(
     
     # Highlight the max focus value
     plt.scatter(max_focus_index, max_focus_value, color='red', label='Max focus', zorder=5, edgecolors='black', s=20)
-    plt.text(130, max_focus_value - (0.05*max_focus_value), f'  Frame {max_focus_index}\n  Max quality {max_focus_value}', verticalalignment='bottom', fontsize=12)
+    plt.text(130, max_focus_value - (0.05*max_focus_value), f'  Frame {max_focus_index}\n  Max FM {max_focus_value}', verticalalignment='bottom', fontsize=12)
 
     # Add labels, title, and legend with increased font size
     plt.xlabel('Frame', fontsize=12)
@@ -103,7 +103,7 @@ def plot_quality_measurements_on_2x2_grid(
 
         # Highlight the max focus value
         ax.scatter(max_focus_index, max_focus_value, color='red', label='Max focus', zorder=5, edgecolors='black', s=20)
-        ax.text(125, max_focus_value - (0.05*max_focus_value), f'  Frame {max_focus_index}\n  Max quality {max_focus_value}', verticalalignment='bottom', fontsize=14)
+        ax.text(125, max_focus_value - (0.05*max_focus_value), f'  Frame {max_focus_index}\n  Max FM {max_focus_value}', verticalalignment='bottom', fontsize=14)
 
         # Add labels, title, and legend
         ax.set_xlabel('Frame', fontsize=12)
