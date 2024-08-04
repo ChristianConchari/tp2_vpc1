@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
-from typing import List
+from typing import List, Dict
+from .video_processing_functions import detect_max_focus_points
 
 def plot_focus_measurement_versus_frame(
     quality_measurements_list: List,
@@ -36,7 +37,7 @@ def plot_focus_measurement_versus_frame(
     
     # Highlight the max focus value
     plt.scatter(max_focus_index, max_focus_value, color='red', label='Max focus', zorder=5, edgecolors='black', s=20)
-    plt.text(max_focus_index + 32, max_focus_value - 0.08, f'  Frame {max_focus_index}\n  Max quality {max_focus_value}', verticalalignment='bottom', fontsize=14)
+    plt.text(130, max_focus_value - (0.05*max_focus_value), f'  Frame {max_focus_index}\n  Max quality {max_focus_value}', verticalalignment='bottom', fontsize=12)
 
     # Add labels, title, and legend with increased font size
     plt.xlabel('Frame', fontsize=12)
@@ -50,4 +51,64 @@ def plot_focus_measurement_versus_frame(
     plt.legend(fontsize=12)
 
     # Show the plot
+    plt.show()
+    
+def plot_quality_measurements_on_2x2_grid(variations: List[Dict[str, int | float]], video_path: str):
+    """
+    Plots the quality measurements for different variations of NxM focus matrices
+    on a 2x2 grid.
+    
+    Parameters:
+    variations (list): A list of dictionaries with keys 'N', 'M', and 'roi_percentage'.
+    video_path (str): The path to the video file.
+    """
+    # Create a figure with 2x2 subplots
+    fig, axs = plt.subplots(2, 2, figsize=(18, 14))
+
+    for i, var in enumerate(variations):
+        # Compute the quality measurements of the video with the focus matrix
+        quality_measurements_list, max_focus_points, max_focus_value = detect_max_focus_points(
+            video_path=video_path, 
+            N=var['N'], 
+            M=var['M'],
+            roi_percentage=var['roi_percentage']
+        )
+        
+        # Find the max focus frames
+        max_focus_frames = [value[0] for value in max_focus_points]
+        
+        # Find the max focus value and its index    
+        max_focus_index = quality_measurements_list.index(max_focus_value)
+        max_focus_value = round(max_focus_value, 4)
+
+        # Select the subplot
+        ax = axs[i//2, i%2]
+
+        # Graph the quality measure curve
+        ax.plot(quality_measurements_list, label='Quality per Frame', color='blue', zorder=1)
+        
+        # Highlight the max focus frames
+        for frame in max_focus_frames:
+            ax.scatter(frame, quality_measurements_list[frame], color='green', zorder=3, edgecolors='black', s=20)
+            
+        # Add sample lines for the legend
+        ax.scatter([], [], color='green', label='Max Focus Frames', edgecolors='black', s=20)
+
+        # Highlight the max focus value
+        ax.scatter(max_focus_index, max_focus_value, color='red', label='Max focus', zorder=5, edgecolors='black', s=20)
+        ax.text(125, max_focus_value - (0.05*max_focus_value), f'  Frame {max_focus_index}\n  Max quality {max_focus_value}', verticalalignment='bottom', fontsize=14)
+
+        # Add labels, title, and legend
+        ax.set_xlabel('Frame', fontsize=12)
+        ax.set_ylabel('Quality Measure', fontsize=12)
+        ax.set_title(f'Image Quality Measure FM Curve\nN={var["N"]}, M={var["M"]}', fontsize=14)
+
+        # Add grid lines
+        ax.grid(True)
+
+        # Add legend
+        ax.legend(fontsize=12)
+
+    # Adjust the layout
+    plt.tight_layout()
     plt.show()
